@@ -1,18 +1,23 @@
 {-# OPTIONS_GHC -Wall #-}
 
 toDigits :: Integer -> [Integer]
-toDigits = map (read . (: [])) . show
+toDigits x
+  | x <= 0 = []
+  | otherwise = map (read . (: [])) . show $ x
 
 toDigitsRev :: Integer -> [Integer]
 toDigitsRev = reverse . toDigits
 
 doubleEveryOther :: [Integer] -> [Integer]
-doubleEveryOther [] = []
-doubleEveryOther (x : xs) = aux (x : xs) 1
-  where
-    aux l i = (x * 2) : doubleEveryOther xs
+doubleEveryOther xs = reverse $ doubleEveryOtherRev $ reverse xs
+
+doubleEveryOtherRev :: [Integer] -> [Integer]
+doubleEveryOtherRev [] = []
+doubleEveryOtherRev [x] = [x]
+doubleEveryOtherRev (x : y : xs) = x : y * 2 : doubleEveryOtherRev xs
 
 sumDigits :: [Integer] -> Integer
-sumDigits = sum
+sumDigits xs = sum $ toDigits $ read $ foldl (\acc curr -> show curr ++ acc) [] xs
 
--- validate :: Integer -> Bool
+validate :: Integer -> Bool
+validate cc = 0 == (sumDigits . doubleEveryOther . toDigits) cc `rem` 10
